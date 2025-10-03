@@ -122,3 +122,14 @@ CREATE POLICY "Users can delete own avatar" ON storage.objects
 -- 10. Grant necessary permissions
 -- GRANT ALL ON user_profiles TO authenticated;
 -- GRANT ALL ON user_profiles TO service_role;
+
+
+-- Ammendment (Between step 1 and 2)
+-- 2. Create updated_at trigger function
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
