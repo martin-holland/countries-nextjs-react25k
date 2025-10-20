@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Vitest Testing Guide for Next.js</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .toc {
+            background: white;
+            padding: 30px;
+            margin-bottom: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .toc h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .toc ul {
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 10px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .toc li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: color 0.3s;
+        }
+
+        .toc a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        section {
+            background: white;
+            padding: 40px;
+            margin-bottom: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin: 30px 0 15px;
+        }
+
+        h4 {
+            color: #555;
+            font-size: 1.3em;
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }
+
+        .inline-code {
+            background: #f4f4f4;
+            color: #e83e8c;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.95em;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .note strong {
+            color: #856404;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .success strong {
+            color: #155724;
+        }
+
+        .warning {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .warning strong {
+            color: #721c24;
+        }
+
+        .key-points {
+            background: #e7f3ff;
+            border: 2px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .key-points h4 {
+            color: #1976D2;
+            margin-top: 0;
+        }
+
+        .key-points ul {
+            margin-left: 20px;
+        }
+
+        .key-points li {
+            margin: 8px 0;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .file-path {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #495057;
+            display: inline-block;
+            margin: 5px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            text-align: center;
+            border-radius: 50%;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .comparison-item.wrong {
+            background: #fee;
+            border: 2px solid #f88;
+        }
+
+        .comparison-item.correct {
+            background: #efe;
+            border: 2px solid #8f8;
+        }
+
+        .comparison-item h5 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+            
+            section {
+                padding: 20px;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 Complete Vitest Testing Guide</h1>
+            <p>A comprehensive guide to testing Next.js applications with Vitest, React Testing Library, Redux, and Supabase</p>
+        </header>
+
+        <nav class="toc">
+            <h2>📑 Table of Contents</h2>
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#initial-setup">Initial Setup & Configuration</a></li>
+                <li><a href="#import-patterns">Import Patterns & Module Resolution</a></li>
+                <li><a href="#mocking-fundamentals">Mocking Fundamentals</a></li>
+                <li><a href="#api-testing">Testing API Routes</a></li>
+                <li><a href="#redux-testing">Testing Redux Slices & Async Thunks</a></li>
+                <li><a href="#component-testing">Testing React Components</a></li>
+                <li><a href="#context-testing">Testing React Context & Supabase</a></li>
+                <li><a href="#best-practices">Best Practices & Common Pitfalls</a></li>
+                <li><a href="#troubleshooting">Troubleshooting Guide</a></li>
+            </ul>
+        </nav>
+
+        <!-- Introduction -->
+        <section id="introduction">
+            <h2>📖 Introduction</h2>
+            
+            <p>This guide documents the complete process of setting up Vitest for a Next.js application that uses:</p>
+            
+            <ul>
+                <li><strong>Next.js 13+</strong> - React framework with App Router</li>
+                <li><strong>Redux Toolkit</strong> - State management with async thunks</li>
+                <li><strong>Supabase</strong> - Authentication and database</li>
+                <li><strong>Material-UI</strong> - Component library</li>
+                <li><strong>React Context</strong> - Global state management</li>
+            </ul>
+
+            <div class="success">
+                <strong>Final Result:</strong> 28 tests passing with 100% success rate across API routes, Redux slices, React components, and Context providers.
+            </div>
+        </section>
+
+        <!-- Initial Setup -->
+        <section id="initial-setup">
+            <h2>⚙️ Initial Setup & Configuration</h2>
+
+            <h3><span class="step-number">1</span> Install Dependencies</h3>
+            
+            <p>Install the required testing dependencies:</p>
+            
+            <pre><code>npm install -D vitest @vitejs/plugin-react jsdom
+npm install -D @testing-library/react @testing-library/jest-dom
+npm install -D @testing-library/user-event</code></pre>
+
+            <div class="key-points">
+                <h4>📌 What Each Package Does:</h4>
+                <ul>
+                    <li><span class="inline-code">vitest</span> - Fast test runner powered by Vite</li>
+                    <li><span class="inline-code">@vitejs/plugin-react</span> - React support for Vite</li>
+                    <li><span class="inline-code">jsdom</span> - DOM implementation for Node.js</li>
+                    <li><span class="inline-code">@testing-library/react</span> - React testing utilities</li>
+                    <li><span class="inline-code">@testing-library/jest-dom</span> - Custom Jest matchers for DOM</li>
+                </ul>
+            </div>
+
+            <h3><span class="step-number">2</span> Create Vitest Configuration</h3>
+            
+            <p>Create <span class="file-path">vitest.config.js</span> at the project root:</p>
+
+            <pre><code>import { defineConfig } from "vitest/config";
+import path from "path";
+
+export default defineConfig({
+  test: {
+    environment: "jsdom",        // Simulates browser environment
+    setupFiles: "./test/setup.js", // Global test setup
+    globals: true,                // Enable global test APIs (describe, it, expect)
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"), // Path alias support
+    },
+  },
+});</code></pre>
+
+            <div class="note">
+                <strong>Important:</strong> The <span class="inline-code">resolve.alias</span> configuration is crucial for making <span class="inline-code">@</span> imports work in tests, matching your Next.js path configuration.
+            </div>
+
+            <h3><span class="step-number">3</span> Create Global Test Setup</h3>
+            
+            <p>Create <span class="file-path">test/setup.js</span>:</p>
+
+            <pre><code>import { afterEach } from "vitest";
+import { cleanup } from "@testing-library/react";
+import "@testing-library/jest-dom/vitest";
+
+// Set up environment variables for testing
+process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
+
+// Automatically unmount and cleanup DOM after each test
+afterEach(() => {
+  cleanup();
+});</code></pre>
+
+            <div class="key-points">
+                <h4>📌 Why This Setup Is Important:</h4>
+                <ul>
+                    <li><strong>cleanup()</strong> - Prevents memory leaks by unmounting components after each test</li>
+                    <li><strong>Environment variables</strong> - Required for Supabase initialization in tests</li>
+                    <li><strong>jest-dom matchers</strong> - Adds helpful assertions like <span class="inline-code">toBeInTheDocument()</span></li>
+                </ul>
+            </div>
+
+            <h3><span class="step-number">4</span> Add Test Scripts to package.json</h3>
+
+            <pre><code>{
+  "scripts": {
+    "test": "vitest",              // Watch mode (runs on file changes)
+    "test:ui": "vitest --ui",      // Visual UI for tests
+    "test:run": "vitest run"       // Run once and exit (CI/CD)
+  }
+}</code></pre>
+        </section>
+
+        <!-- Import Patterns -->
+        <section id="import-patterns">
+            <h2>📦 Import Patterns & Module Resolution</h2>
+
+            <h3>Critical Lesson: React Imports in Test Environment</h3>
+
+            <div class="warning">
+                <strong>Common Error:</strong> Even though Next.js 13+ auto-imports React, Vitest requires explicit React imports in test files.
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-item wrong">
+                    <h5>❌ WRONG - Will Fail in Tests</h5>
+                    <pre><code>// Component file
+import { useState } from "react";
+
+function MyComponent() {
+  return &lt;div&gt;Hello&lt;/div&gt;;
+}</code></pre>
+                </div>
+                <div class="comparison-item correct">
+                    <h5>✅ CORRECT - Works in Tests</h5>
+                    <pre><code>// Component file
+import React, { useState } from "react";
+
+function MyComponent() {
+  return &lt;div&gt;Hello&lt;/div&gt;;
+}</code></pre>
+                </div>
+            </div>
+
+            <h3>Test File Import Pattern</h3>
+
+            <p>Every test file should follow this import structure:</p>
+
+            <pre><code>// 1. React import (if testing components/JSX)
+import React from "react";
+
+// 2. Testing utilities
+import { render, screen, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+
+// 3. Component/module being tested
+import MyComponent from "../MyComponent";
+
+// 4. Additional dependencies (Redux, Router, etc.)
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";</code></pre>
+
+            <h3>Path Alias Resolution</h3>
+
+            <p>Use <span class="inline-code">@</span> for imports consistently:</p>
+
+            <pre><code>// ✅ CORRECT - Use path alias
+import { supabase } from "@/lib/supabase/supabase";
+import MyComponent from "@/components/MyComponent";
+
+// ❌ WRONG - Relative paths can break in tests
+import { supabase } from "../../lib/supabase/supabase";</code></pre>
+
+            <div class="note">
+                <strong>Exception:</strong> When importing the module being tested, use relative paths (e.g., <span class="inline-code">import Component from "../Component"</span>) as the test file is in the same directory structure.
+            </div>
+        </section>
+
+        <!-- Mocking Fundamentals -->
+        <section id="mocking-fundamentals">
+            <h2>🎭 Mocking Fundamentals</h2>
+
+            <h3>Understanding vi.mock()</h3>
+
+            <p>Vitest's <span class="inline-code">vi.mock()</span> is automatically hoisted to the top of the file, before any imports are processed.</p>
+
+            <h4>Basic Mock Structure</h4>
+
+            <pre><code>import { vi } from "vitest";
+
+// This mock is hoisted to the top automatically
+vi.mock("@/lib/supabase/supabase", () => ({
+  supabase: {
+    auth: {
+      getSession: vi.fn(),
+      onAuthStateChange: vi.fn(),
+      signOut: vi.fn(),
+    },
+  },
+}));</code></pre>
+
+            <div class="warning">
+                <strong>Critical Rule:</strong> Never use variables defined outside the mock factory function. They won't be available due to hoisting.
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-item wrong">
+                    <h5>❌ WRONG - Variable Not Available</h5>
+                    <pre><code>const mockAuth = {
+  getSession: vi.fn(),
+};
+
+// This will fail - mockAuth is not defined yet
+vi.mock("@/lib/supabase/supabase", () => ({
+  supabase: { auth: mockAuth }
+}));</code></pre>
+                </div>
+                <div class="comparison-item correct">
+                    <h5>✅ CORRECT - Define Inside Factory</h5>
+                    <pre><code>vi.mock("@/lib/supabase/supabase", () => ({
+  supabase: {
+    auth: {
+      getSession: vi.fn(),
+      onAuthStateChange: vi.fn(),
+    }
+  }
+}));</code></pre>
+                </div>
+            </div>
+
+            <h3>Accessing Mocked Module</h3>
+
+            <p>To access and modify mocks in tests, import the module as a namespace:</p>
+
+            <pre><code>import * as supabaseModule from "@/lib/supabase/supabase";
+
+describe("My Test", () => {
+  it("should do something", () => {
+    // Access the mocked methods
+    supabaseModule.supabase.auth.getSession.mockResolvedValue({
+      data: { session: null },
+      error: null,
+    });
+    
+    // Run your test
+  });
+});</code></pre>
+
+            <div class="key-points">
+                <h4>📌 Why Use Namespace Imports:</h4>
+                <ul>
+                    <li>Provides access to mocked methods at runtime</li>
+                    <li>Works with Vitest's module mocking system</li>
+                    <li>Allows per-test mock configuration</li>
+                    <li>Avoids issues with <span class="inline-code">require()</span> and path aliases</li>
+                </ul>
+            </div>
+
+            <h3>Mock Functions</h3>
+
+            <h4>Creating Mock Functions</h4>
+
+            <pre><code>// Simple mock function
+const mockFn = vi.fn();
+
+// Mock with return value
+const mockFn = vi.fn().mockReturnValue(42);
+
+// Mock with resolved promise
+const mockFn = vi.fn().mockResolvedValue({ data: "result" });
+
+// Mock with implementation
+const mockFn = vi.fn((x) => x * 2);</code></pre>
+
+            <h4>Asserting on Mocks</h4>
+
+            <pre><code>// Check if called
+expect(mockFn).toHaveBeenCalled();
+
+// Check call count
+expect(mockFn).toHaveBeenCalledTimes(3);
+
+// Check arguments
+expect(mockFn).toHaveBeenCalledWith("arg1", "arg2");
+
+// Check last call
+expect(mockFn).toHaveBeenLastCalledWith("lastArg");</code></pre>
+
+            <h3>Clearing and Resetting Mocks</h3>
+
+            <pre><code>import { beforeEach, vi } from "vitest";
+
+describe("My Tests", () => {
+  beforeEach(() => {
+    // Clear call history but keep implementation
+    vi.clearAllMocks();
+    
+    // Or reset everything including implementation
+    vi.resetAllMocks();
+  });
+});</code></pre>
+        </section>
+
+        <!-- API Testing -->
+        <section id="api-testing">
+            <h2>🌐 Testing API Routes</h2>
+
+            <h3>Next.js Route Handler Testing</h3>
+
+            <p>Testing Next.js API routes requires understanding the Request/Response pattern:</p>
+
+            <div class="file-path">src/app/api/test/__tests__/route.test.js</div>
+
+            <pre><code>import { describe, expect, it } from "vitest";
+
+// Mock Next.js request
+const createMockRequest = () => ({
+  url: "http://localhost:3000/api/test",
+  method: "GET",
+  headers: new Headers(),
+});
+
+describe("API Route: /api/test", () => {
+  it("should return a successful response", async () => {
+    // Import the route handler dynamically
+    const { GET } = await import("../route.js");
+
+    const mockRequest = createMockRequest();
+    const response = await GET(mockRequest);
+
+    expect(response).toBeInstanceOf(Response);
+    expect(response.status).toBe(200);
+  });
+
+  it("should return JSON data", async () => {
+    const { GET } = await import("../route.js");
+    
+    const mockRequest = createMockRequest();
+    const response = await GET(mockRequest);
+    
+    // Parse JSON response
+    const data = await response.json();
+    
+    expect(data).toHaveProperty("message");
+    expect(data.message).toBe("Hello World");
+  });
+});</code></pre>
+
+            <div class="key-points">
+                <h4>📌 Key Concepts:</h4>
+                <ul>
+                    <li><strong>Dynamic Import</strong> - Import route handler inside test to ensure clean state</li>
+                    <li><strong>Mock Request</strong> - Create request objects matching Next.js structure</li>
+                    <li><strong>Response Testing</strong> - Check status, headers, and body content</li>
+                    <li><strong>Async/Await</strong> - Route handlers are always async</li>
+                </ul>
+            </div>
+
+            <h3>Testing Different HTTP Methods</h3>
+
+            <pre><code>describe("API Route: /api/users", () => {
+  it("should handle GET requests", async () => {
+    const { GET } = await import("../route.js");
+    const response = await GET(createMockRequest("GET"));
+    expect(response.status).toBe(200);
+  });
+
+  it("should handle POST requests", async () => {
+    const { POST } = await import("../route.js");
+    const request = createMockRequest("POST", {
+      name: "John Doe",
+      email: "john@example.com"
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+  });
+});</code></pre>
+        </section>
+
+        <!-- Redux Testing -->
+        <section id="redux-testing">
+            <h2>🔄 Testing Redux Slices & Async Thunks</h2>
+
+            <h3>Testing Redux Reducers</h3>
+
+            <p>Redux reducers are pure functions, making them straightforward to test:</p>
+
+            <div class="file-path">src/lib/features/favourites/__tests__/favouritesSlice.test.js</div>
+
+            <pre><code>import { describe, expect, it } from "vitest";
+import favouritesReducer, {
+  addFavouriteLocally,
+  removeFavouriteLocally,
+} from "../favouritesSlice";
+
+describe("favouritesSlice reducers", () => {
+  it("should return initial state", () => {
+    const state = favouritesReducer(undefined, { type: "@@INIT" });
+    
+    expect(state).toEqual({
+      favourites: [],
+      loading: false,
+    });
+  });
+
+  it("should add favourite locally", () => {
+    const initialState = {
+      favourites: [],
+      loading: false,
+    };
+
+    const action = addFavouriteLocally({
+      country_name: "France",
+      flag_url: "france.svg",
+    });
+
+    const newState = favouritesReducer(initialState, action);
+
+    expect(newState.favourites).toHaveLength(1);
+    expect(newState.favourites[0].country_name).toBe("France");
+  });
+
+  it("should remove favourite locally", () => {
+    const initialState = {
+      favourites: [
+        { id: 1, country_name: "France" },
+        { id: 2, country_name: "Spain" },
+      ],
+      loading: false,
+    };
+
+    const action = removeFavouriteLocally({ country_name: "France" });
+    const newState = favouritesReducer(initialState, action);
+
+    expect(newState.favourites).toHaveLength(1);
+    expect(newState.favourites[0].country_name).toBe("Spain");
+  });
+});</code></pre>
+
+            <h3>Testing Async Thunks</h3>
+
+            <p>Async thunks require mocking external dependencies and testing different states:</p>
+
+            <pre><code>import { describe, expect, it, vi, beforeEach } from "vitest";
+import { configureStore } from "@reduxjs/toolkit";
+import favouritesReducer, { fetchFavourites } from "../favouritesSlice";
+
+// Mock Supabase
+const mockSupabase = {
+  from: vi.fn(),
+};
+
+vi.mock("@/lib/supabase/supabase", () => ({
+  supabase: mockSupabase,
+}));
+
+describe("fetchFavourites async thunk", () => {
+  let store;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    
+    // Create a fresh store for each test
+    store = configureStore({
+      reducer: {
+        favourites: favouritesReducer,
+      },
+    });
+  });
+
+  it("should fetch favourites successfully", async () => {
+    // Mock successful response
+    mockSupabase.from.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockResolvedValue({
+          data: [
+            { id: 1, country_name: "France", flag_url: "france.svg" },
+            { id: 2, country_name: "Spain", flag_url: "spain.svg" },
+          ],
+          error: null,
+        }),
+      }),
+    });
+
+    // Dispatch the async thunk
+    await store.dispatch(fetchFavourites("user-123"));
+
+    // Check the state
+    const state = store.getState().favourites;
+    
+    expect(state.loading).toBe(false);
+    expect(state.favourites).toHaveLength(2);
+    expect(state.favourites[0].country_name).toBe("France");
+  });
+
+  it("should handle fetch errors", async () => {
+    // Mock error response
+    mockSupabase.from.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockResolvedValue({
+          data: null,
+          error: { message: "Database error" },
+        }),
+      }),
+    });
+
+    await store.dispatch(fetchFavourites("user-123"));
+
+    const state = store.getState().favourites;
+    
+    expect(state.loading).toBe(false);
+    expect(state.favourites).toEqual([]);
+  });
+
+  it("should set loading state during fetch", () => {
+    // Create a pending promise
+    mockSupabase.from.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue(
+          new Promise(() => {}) // Never resolves
+        ),
+      }),
+    });
+
+    store.dispatch(fetchFavourites("user-123"));
+
+    // Check loading state immediately
+    const state = store.getState().favourites;
+    expect(state.loading).toBe(true);
+  });
+});</code></pre>
+
+            <div class="key-points">
+                <h4>📌 Testing Async Thunks - Key Points:</h4>
+                <ul>
+                    <li><strong>Mock External APIs</strong> - Mock Supabase, fetch, axios, etc.</li>
+                    <li><strong>Test All States</strong> - Pending, fulfilled, and rejected</li>
+                    <li><strong>Use Real Store</strong> - Create a store with configureStore for integration</li>
+                    <li><strong>Clear Mocks</strong> - Reset mocks between tests for isolation</li>
+                    <li><strong>Check State Changes</strong> - Verify loading flags and data updates</li>
+                </ul>
+            </div>
+
+            <h3>Mocking Supabase Chain Methods</h3>
+
+            <p>Supabase uses method chaining, which requires careful mocking:</p>
+
+            <pre><code>// Supabase query: supabase.from('table').select('*').eq('id', 1)
+
+// Mock structure:
+mockSupabase.from.mockReturnValue({
+  select: vi.fn().mockReturnValue({
+    eq: vi.fn().mockResolvedValue({
+      data: [...],
+      error: null,
+    }),
+  }),
+});</code></pre>
+
+            <div class="note">
+                <strong>Pattern:</strong> Each method in the chain returns an object with the next method. The final method returns a Promise with <span class="inline-code">{data, error}</span>.
+            </div>
+        </section>
+
+        <!-- Component Testing -->
+        <section id="component-testing">
+            <h2>⚛️ Testing React Components</h2>
+
+            <h3>Basic Component Testing</h3>
+
+            <p>Testing React components with Redux and Context integration:</p>
+
+            <div class="file-path">src/components/__tests__/FavouriteButton.test.jsx</div>
+
+            <pre><code>import { configureStore } from "@reduxjs/toolkit";
+import { render, screen } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { describe, expect, it, vi } from "vitest";
+import favouritesReducer from "../../lib/features/favourites/favouritesSlice";
+import FavouriteButton from "../FavouriteButton";
+
+// Mock the AuthContext
+const mockAuthContext = {
+  user: { id: "test-user-id", email: "test@example.com" },
+  session: { access_token: "mock-token" },
+  loading: false,
+  signOut: vi.fn(),
+};
+
+vi.mock("../../app/context/AuthContext", () => ({
+  useAuth: () => mockAuthContext,
+}));
+
+// Create a test store
+const createTestStore = (initialState = {}) => {
+  return configureStore({
+    reducer: {
+      favourites: favouritesReducer,
+    },
+    preloadedState: {
+      favourites: {
+        favourites: [],
+        loading: false,
+        ...initialState.favourites,
+      },
+    },
+  });
+};
+
+// Test wrapper with Redux Provider
+const TestWrapper = ({ children, store }) => (
+  &lt;Provider store={store}&gt;{children}&lt;/Provider&gt;
+);
+
+describe("FavouriteButton Component", () => {
+  const mockCountry = {
+    name: { common: "Test Country" },
+    flags: { svg: "test-flag.svg" },
+    population: 1000000,
+  };
+
+  it("renders favorite button when user is authenticated", () => {
+    const store = createTestStore();
+    
+    render(
+      &lt;TestWrapper store={store}&gt;
+        &lt;FavouriteButton country={mockCountry} /&gt;
+      &lt;/TestWrapper&gt;
+    );
+
+    expect(screen.getByRole("button")).toBeInTheDocument();
+  });
+
+  it("shows filled heart when country is favorited", () => {
+    const store = createTestStore({
+      favourites: {
+        favourites: [{ country_name: "Test Country" }],
+        loading: false,
+      },
+    });
+
+    render(
+      &lt;TestWrapper store={store}&gt;
+        &lt;FavouriteButton country={mockCountry} /&gt;
+      &lt;/TestWrapper&gt;
+    );
+
+    expect(screen.getByTestId("FavoriteIcon")).toBeInTheDocument();
+  });
+
+  it("disables button when loading", () => {
+    const store = createTestStore({
+      favourites: {
+        favourites: [],
+        loading: true,
+      },
+    });
+
+    render(
+      &lt;TestWrapper store={store}&gt;
+        &lt;FavouriteButton country={mockCountry} /&gt;
+      &lt;/TestWrapper&gt;
+    );
+
+    expect(screen.getByRole("button")).toBeDisabled();
+  });
+});</code></pre>
+
+            <div class="key-points">
+                <h4>📌 Component Testing Best Practices:</h4>
+                <ul>
+                    <li><strong>Test Wrappers</strong> - Create wrapper components for Providers</li>
+                    <li><strong>Mock Context</strong> - Mock custom hooks and context providers</li>
+                    <li><strong>Test State</strong> - Verify component behavior with different Redux states</li>
+                    <li><strong>User Interactions</strong> - Test clicks, inputs, and other events</li>
+                    <li><strong>Accessibility</strong> - Use <span class="inline-code">getByRole</span> for better tests</li>
+                </ul>
+            </div>
+
+            <h3>Testing Material-UI Components</h3>
+
+            <p>Material-UI Tooltips and other components require special handling:</p>
+
+            <pre><code>it("shows correct tooltip text", () => {
+  const store = createTestStore();
+  
+  render(
+    &lt;TestWrapper store={store}&gt;
+      &lt;FavouriteButton country={mockCountry} /&gt;
+    &lt;/TestWrapper&gt;
+  );
+
+  // Use aria-label instead of text content for tooltips
+  expect(screen.getByLabelText("Add to favourites")).toBeInTheDocument();
+});</code></pre>
+
+            <div class="note">
+                <strong>Tooltip Testing:</strong> Material-UI Tooltips use <span class="inline-code">aria-label</span> for accessibility. The tooltip text is not rendered in the DOM until hovered, so use <span class="inline-code">getByLabelText</span> instead of <span class="inline-code">getByText</span>.
+            </div>
+
+            <h3>Testing User Interactions</h3>
+
+            <pre><code>import userEvent from "@testing-library/user-event";
+
+it("should call onClick when button is clicked", async () => {
+  const user = userEvent.setup();
+  const mockOnClick = vi.fn();
+  
+  render(&lt;Button onClick={mockOnClick}&gt;Click Me&lt;/Button&gt;);
+  
+  await user.click(screen.getByRole("button"));
+  
+  expect(mockOnClick).toHaveBeenCalledTimes(1);
+});</code></pre>
+        </section>
+
+        <!-- Context Testing -->
+        <section id="context-testing">
+            <h2>🌍 Testing React Context & Supabase</h2>
+
+            <h3>Setting Up Context Tests</h3>
+
+            <p>Testing React Context with external dependencies like Supabase:</p>
+
+            <div class="file-path">src/app/context/__tests__/AuthContext.test.jsx</div>
+
+            <pre><code>import * as supabaseModule from "@/lib/supabase/supabase";
+import { act, render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { AuthProvider, useAuth } from "../AuthContext";
+
+// Mock Supabase
+vi.mock("@/lib/supabase/supabase", () => ({
+  supabase: {
+    auth: {
+      getSession: vi.fn(),
+      onAuthStateChange: vi.fn(),
+      signOut: vi.fn(),
+    },
+  },
+}));
+
+// Test component that uses the context
+const TestComponent = () => {
+  const { user, session, loading, signOut } = useAuth();
+
+  return (
+    &lt;div&gt;
+      &lt;div data-testid="user"&gt;{user ? user.email : "No user"}&lt;/div&gt;
+      &lt;div data-testid="session"&gt;{session ? "Has session" : "No session"}&lt;/div&gt;
+      &lt;div data-testid="loading"&gt;{loading ? "Loading" : "Not loading"}&lt;/div&gt;
+      &lt;button onClick={signOut}&gt;Sign Out&lt;/button&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+
+            <h3>Testing Initial State</h3>
+
+            <pre><code>describe("AuthContext", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should provide initial loading state", () => {
+    supabaseModule.supabase.auth.getSession.mockResolvedValue({
+      data: { session: null },
+      error: null,
+    });
+
+    supabaseModule.supabase.auth.onAuthStateChange.mockReturnValue({
+      data: { subscription: { unsubscribe: vi.fn() } },
+    });
+
+    render(
+      &lt;AuthProvider&gt;
+        &lt;TestComponent /&gt;
+      &lt;/AuthProvider&gt;
+    );
+
+    expect(screen.getByTestId("loading")).toHaveTextContent("Loading");
+  });
+});</code></pre>
+
+            <h3>Testing Async State Updates</h3>
+
+            <p>React Context with async operations requires <span class="inline-code">act()</span> and timeouts:</p>
+
+            <pre><code>it("should handle successful session retrieval", async () => {
+  const mockSession = {
+    user: { id: "user-1", email: "test@example.com" },
+    access_token: "token-123",
+  };
+
+  supabaseModule.supabase.auth.getSession.mockResolvedValue({
+    data: { session: mockSession },
+    error: null,
+  });
+
+  supabaseModule.supabase.auth.onAuthStateChange.mockReturnValue({
+    data: { subscription: { unsubscribe: vi.fn() } },
+  });
+
+  render(
+    &lt;AuthProvider&gt;
+      &lt;TestComponent /&gt;
+    &lt;/AuthProvider&gt;
+  );
+
+  // Wait for the initial session to be processed
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  });
+
+  expect(screen.getByTestId("user")).toHaveTextContent("test@example.com");
+  expect(screen.getByTestId("session")).toHaveTextContent("Has session");
+  expect(screen.getByTestId("loading")).toHaveTextContent("Not loading");
+});</code></pre>
+
+            <div class="warning">
+                <strong>Important:</strong> The <span class="inline-code">act()</span> wrapper ensures React state updates are processed. The timeout allows async operations (like useEffect) to complete.
+            </div>
+
+            <h3>Testing Callbacks and State Changes</h3>
+
+            <pre><code>it("should handle auth state changes", async () => {
+  let authStateChangeCallback;
+
+  supabaseModule.supabase.auth.getSession.mockResolvedValue({
+    data: { session: null },
+    error: null,
+  });
+
+  // Capture the callback function
+  supabaseModule.supabase.auth.onAuthStateChange.mockImplementation(
+    (callback) => {
+      authStateChangeCallback = callback;
+      return {
+        data: { subscription: { unsubscribe: vi.fn() } },
+      };
+    }
+  );
+
+  render(
+    &lt;AuthProvider&gt;
+      &lt;TestComponent /&gt;
+    &lt;/AuthProvider&gt;
+  );
+
+  // Wait for initial render
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  });
+
+  // Simulate auth state change by calling the callback
+  const newSession = {
+    user: { id: "user-2", email: "newuser@example.com" },
+    access_token: "new-token",
+  };
+
+  await act(async () => {
+    if (authStateChangeCallback) {
+      authStateChangeCallback("SIGNED_IN", newSession);
+    }
+  });
+
+  // Wait for state update
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  });
+
+  expect(screen.getByTestId("user")).toHaveTextContent("newuser@example.com");
+});</code></pre>
+
+            <div class="key-points">
+                <h4>📌 Key Patterns for Testing Supabase Auth:</h4>
+                <ul>
+                    <li><strong>Mock getSession</strong> - Return mock session data</li>
+                    <li><strong>Mock onAuthStateChange</strong> - Capture callback to trigger manually</li>
+                    <li><strong>Use act()</strong> - Wrap all state updates and async operations</li>
+                    <li><strong>Add timeouts</strong> - Allow useEffect hooks to complete</li>
+                    <li><strong>Test cleanup</strong> - Verify unsubscribe is called on unmount</li>
+                </ul>
+            </div>
+
+            <h3>Testing Cleanup and Unmount</h3>
+
+            <pre><code>it("should cleanup subscription on unmount", () => {
+  const mockUnsubscribe = vi.fn();
+
+  supabaseModule.supabase.auth.getSession.mockResolvedValue({
+    data: { session: null },
+    error: null,
+  });
+
+  supabaseModule.supabase.auth.onAuthStateChange.mockReturnValue({
+    data: { subscription: { unsubscribe: mockUnsubscribe } },
+  });
+
+  const { unmount } = render(
+    &lt;AuthProvider&gt;
+      &lt;TestComponent /&gt;
+    &lt;/AuthProvider&gt;
+  );
+
+  // Force a re-render to ensure subscription is set up
+  act(() => {});
+
+  unmount();
+  
+  expect(mockUnsubscribe).toHaveBeenCalled();
+});</code></pre>
+
+            <h3>Testing Error Boundaries</h3>
+
+            <pre><code>it("should throw error when used outside AuthProvider", () => {
+  // Suppress console.error for this test
+  const consoleSpy = vi
+    .spyOn(console, "error")
+    .mockImplementation(() => {});
+
+  expect(() => {
+    render(&lt;TestComponentWithoutProvider /&gt;);
+  }).toThrow("useAuth must be used within an AuthProvider");
+
+  consoleSpy.mockRestore();
+});</code></pre>
+        </section>
+
+        <!-- Best Practices -->
+        <section id="best-practices">
+            <h2>✨ Best Practices & Common Pitfalls</h2>
+
+            <h3>Best Practices</h3>
+
+            <h4>1. Test Isolation</h4>
+            <pre><code>beforeEach(() => {
+  vi.clearAllMocks();  // Clear mock history
+  cleanup();           // Unmount components
+});</code></pre>
+
+            <h4>2. Descriptive Test Names</h4>
+            <pre><code>// ✅ GOOD
+it("should display error message when login fails", () => {});
+
+// ❌ BAD
+it("test login", () => {});</code></pre>
+
+            <h4>3. Test User Behavior, Not Implementation</h4>
+            <pre><code>// ✅ GOOD - Test what user sees
+expect(screen.getByText("Welcome, John")).toBeInTheDocument();
+
+// ❌ BAD - Test internal state
+expect(component.state.username).toBe("John");</code></pre>
+
+            <h4>4. Use Testing Library Queries Correctly</h4>
+            <div class="key-points">
+                <h4>Query Priority:</h4>
+                <ol>
+                    <li><span class="inline-code">getByRole</span> - Accessible queries (best)</li>
+                    <li><span class="inline-code">getByLabelText</span> - Form labels</li>
+                    <li><span class="inline-code">getByPlaceholderText</span> - Input placeholders</li>
+                    <li><span class="inline-code">getByText</span> - Text content</li>
+                    <li><span class="inline-code">getByTestId</span> - Last resort</li>
+                </ol>
+            </div>
+
+            <h3>Common Pitfalls</h3>
+
+            <h4>1. Forgetting React Import</h4>
+            <div class="warning">
+                <strong>Error:</strong> "React is not defined"<br>
+                <strong>Fix:</strong> Add <span class="inline-code">import React from "react";</span> to test files and components
+            </div>
+
+            <h4>2. Not Wrapping Async State Updates in act()</h4>
+            <div class="warning">
+                <strong>Error:</strong> "Warning: An update to Component inside a test was not wrapped in act(...)"<br>
+                <strong>Fix:</strong> Wrap state changes in <span class="inline-code">act()</span>
+            </div>
+
+            <pre><code>// ✅ CORRECT
+await act(async () => {
+  await new Promise((resolve) => setTimeout(resolve, 100));
+});
+
+// ❌ WRONG
+await new Promise((resolve) => setTimeout(resolve, 100));</code></pre>
+
+            <h4>3. Using require() with Path Aliases</h4>
+            <div class="warning">
+                <strong>Error:</strong> "Cannot find module '@/...' "</strong><br>
+                <strong>Fix:</strong> Use ES6 imports: <span class="inline-code">import * as module from "@/..."</span>
+            </div>
+
+            <h4>4. Not Mocking External Dependencies</h4>
+            <div class="warning">
+                <strong>Error:</strong> Tests fail or hang due to real API calls<br>
+                <strong>Fix:</strong> Mock all external dependencies (Supabase, fetch, etc.)
+            </div>
+
+            <h4>5. Testing Implementation Details</h4>
+            <div class="warning">
+                <strong>Issue:</strong> Tests break with refactoring<br>
+                <strong>Fix:</strong> Test behavior and output, not internal implementation
+            </div>
+
+            <h3>Performance Tips</h3>
+
+            <ul>
+                <li>Use <span class="inline-code">test.concurrent</span> for independent tests</li>
+                <li>Mock heavy dependencies (databases, APIs)</li>
+                <li>Avoid unnecessary DOM queries in loops</li>
+                <li>Use <span class="inline-code">screen.debug()</span> sparingly (it's expensive)</li>
+            </ul>
+        </section>
+
+        <!-- Troubleshooting -->
+        <section id="troubleshooting">
+            <h2>🔧 Troubleshooting Guide</h2>
+
+            <h3>Issue: "React is not defined"</h3>
+            <div class="note">
+                <strong>Symptoms:</strong> Tests fail with ReferenceError<br>
+                <strong>Solution:</strong> Add <span class="inline-code">import React from "react";</span> to component and test files
+            </div>
+
+            <h3>Issue: "Cannot find module '@/...'"</h3>
+            <div class="note">
+                <strong>Symptoms:</strong> Module resolution fails in tests<br>
+                <strong>Solutions:</strong>
+                <ol>
+                    <li>Check <span class="inline-code">vitest.config.js</span> has correct alias configuration</li>
+                    <li>Use ES6 imports instead of require()</li>
+                    <li>Verify path is correct relative to src directory</li>
+                </ol>
+            </div>
+
+            <h3>Issue: "act(...) warning"</h3>
+            <div class="note">
+                <strong>Symptoms:</strong> Warning about unwrapped state updates<br>
+                <strong>Solution:</strong> Wrap async operations in act()
+                <pre><code>await act(async () => {
+  await new Promise((resolve) => setTimeout(resolve, 100));
+});</code></pre>
+            </div>
+
+            <h3>Issue: Mocks not working</h3>
+            <div class="note">
+                <strong>Symptoms:</strong> Mocked functions are not called or return undefined<br>
+                <strong>Solutions:</strong>
+                <ol>
+                    <li>Ensure <span class="inline-code">vi.mock()</span> is at the top level</li>
+                    <li>Import module as namespace: <span class="inline-code">import * as module</span></li>
+                    <li>Clear mocks with <span class="inline-code">vi.clearAllMocks()</span> in beforeEach</li>
+                    <li>Check mock path matches actual import path</li>
+                </ol>
+            </div>
+
+            <h3>Issue: Tests timeout</h3>
+            <div class="note">
+                <strong>Symptoms:</strong> Tests hang or exceed timeout<br>
+                <strong>Solutions:</strong>
+                <ol>
+                    <li>Mock all async operations (API calls, timers)</li>
+                    <li>Check for infinite loops in components</li>
+                    <li>Ensure promises resolve/reject in mocks</li>
+                    <li>Increase timeout: <span class="inline-code">it("test", async () => {}, 10000)</span></li>
+                </ol>
+            </div>
+
+            <h3>Issue: Redux state not updating</h3>
+            <div class="note">
+                <strong>Symptoms:</strong> State remains unchanged after dispatch<br>
+                <strong>Solutions:</strong>
+                <ol>
+                    <li>Use <span class="inline-code">await store.dispatch()</span> for async thunks</li>
+                    <li>Check reducer is properly handling action</li>
+                    <li>Verify store configuration includes reducer</li>
+                    <li>Use <span class="inline-code">store.getState()</span> to inspect current state</li>
+                </ol>
+            </div>
+
+            <h3>Debug Commands</h3>
+
+            <pre><code>// Print current DOM structure
+screen.debug();
+
+// Print specific element
+screen.debug(screen.getByTestId("my-element"));
+
+// Log all available queries
+screen.logTestingPlaygroundURL();
+
+// Inspect Redux state
+console.log(store.getState());</code></pre>
+        </section>
+
+        <footer>
+            <p><strong>Testing is an investment in code quality and maintainability.</strong></p>
+            <p>Keep your tests simple, focused, and maintainable. Happy testing! 🎉</p>
+            <p style="margin-top: 20px; color: #999;">Generated with ❤️ for the Next.js + Vitest community</p>
+        </footer>
+    </div>
+</body>
+</html>
