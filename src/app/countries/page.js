@@ -32,7 +32,7 @@ const Countries = () => {
   console.log("Countries: ", countries);
 
   if (countries.length === 0) {
-    return <div>Loading...</div>;
+    return <div data-testid="loading">Loading...</div>;
   }
 
   const getCurrencies = (country) => {
@@ -50,14 +50,17 @@ const Countries = () => {
         direction="row"
         justifyContent="center"
         alignItems="center"
+        data-testid="countries-grid"
       >
         {countries.map((country) => (
           <Card
             key={country.name.common}
             sx={{ width: "200px", height: "200px" }}
+            data-testid="country-card"
           >
             <CardActionArea
               onClick={() => handleCountryClick(country.name.common)}
+              data-testid="country-card-button"
             >
               <CardContent>
                 <Image

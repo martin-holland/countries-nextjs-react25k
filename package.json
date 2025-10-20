@@ -9,7 +9,11 @@
     "lint": "eslint",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "cypress": "cypress open",
+    "cypress:headless": "cypress run",
+    "e2e": "start-server-and-test dev http://localhost:3000 cypress",
+    "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -29,12 +33,15 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/cypress": "^10.1.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "cypress": "^15.5.0",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
     "jsdom": "^27.0.1",
+    "start-server-and-test": "^2.1.2",
     "tailwindcss": "^4",
     "vitest": "^3.2.4"
   }

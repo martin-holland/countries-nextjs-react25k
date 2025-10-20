@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cypress E2E Testing - Complete Setup Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #17202A;
+            border-bottom: 4px solid #69F0AE;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #1A5490;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 5px solid #69F0AE;
+            font-size: 1.8em;
+        }
+
+        h3 {
+            color: #2874A6;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        h4 {
+            color: #34495E;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        ul, ol {
+            margin-bottom: 20px;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #d63384;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #569CD6;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        /* JavaScript Syntax Highlighting */
+        .keyword {
+            color: #C586C0;
+            font-weight: bold;
+        }
+
+        .function {
+            color: #DCDCAA;
+        }
+
+        .string {
+            color: #CE9178;
+        }
+
+        .comment {
+            color: #6A9955;
+            font-style: italic;
+        }
+
+        .property {
+            color: #9CDCFE;
+        }
+
+        .method {
+            color: #DCDCAA;
+        }
+
+        .operator {
+            color: #D4D4D4;
+        }
+
+        .number {
+            color: #B5CEA8;
+        }
+
+        .boolean {
+            color: #569CD6;
+        }
+
+        .arrow {
+            color: #569CD6;
+        }
+
+        .bracket {
+            color: #FFD700;
+        }
+
+        /* Bash/Terminal styling */
+        pre.bash {
+            background: #0d1117;
+            border-left-color: #58A6FF;
+        }
+
+        pre.bash code {
+            color: #c9d1d9;
+        }
+
+        pre.bash::before {
+            content: '$';
+            color: #58A6FF;
+            margin-right: 10px;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        .info-box {
+            background: #E8F8F5;
+            border-left: 4px solid #1ABC9C;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .warning-box {
+            background: #FEF9E7;
+            border-left: 4px solid #F39C12;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .error-box {
+            background: #FADBD8;
+            border-left: 4px solid #E74C3C;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .success-box {
+            background: #D5F4E6;
+            border-left: 4px solid #28B463;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .icon {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #2874A6;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .toc {
+            background: #F8F9F9;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 30px 0;
+            border: 1px solid #ddd;
+        }
+
+        .toc h2 {
+            margin-top: 0;
+            border-left: none;
+            padding-left: 0;
+        }
+
+        .toc ul {
+            list-style-position: inside;
+        }
+
+        .toc a {
+            color: #2874A6;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        .file-tree {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            margin: 20px 0;
+            border-left: 4px solid #569CD6;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .file-tree-line {
+            padding-left: 0;
+            white-space: pre;
+        }
+
+        .tree-directory {
+            color: #4EC9B0;
+            font-weight: bold;
+        }
+
+        .tree-file {
+            color: #9CDCFE;
+        }
+
+        .tree-comment {
+            color: #6A9955;
+        }
+
+        .tree-icon {
+            color: #858585;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .badge-success {
+            background: #28B463;
+            color: white;
+        }
+
+        .badge-error {
+            background: #E74C3C;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #F39C12;
+            color: white;
+        }
+
+        .badge-info {
+            background: #3498DB;
+            color: white;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: #69F0AE;
+            color: #1A5490;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .command-line {
+            background: #1e1e1e;
+            color: #4EC9B0;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Cypress E2E Testing - Complete Setup Guide</h1>
+        
+        <div class="info-box">
+            <p><span class="icon">ℹ️</span> <strong>Document Overview:</strong> This comprehensive guide covers the complete setup of Cypress for E2E testing in a Next.js application, including all encountered problems, their solutions, and best practices.</p>
+        </div>
+
+        <div class="toc">
+            <h2>📑 Table of Contents</h2>
+            <ol>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#installation">Installation & Setup</a></li>
+                <li><a href="#configuration">Configuration</a></li>
+                <li><a href="#file-structure">File Structure</a></li>
+                <li><a href="#writing-tests">Writing Tests</a></li>
+                <li><a href="#problems-encountered">Problems Encountered & Solutions</a></li>
+                <li><a href="#best-practices">Best Practices</a></li>
+                <li><a href="#running-tests">Running Tests</a></li>
+                <li><a href="#advanced-topics">Advanced Topics</a></li>
+                <li><a href="#troubleshooting">Troubleshooting Guide</a></li>
+            </ol>
+        </div>
+
+        <!-- SECTION 1: INTRODUCTION -->
+        <h2 id="introduction">1. Introduction</h2>
+        
+        <h3>What is Cypress?</h3>
+        <p>Cypress is a next-generation front-end testing tool built for the modern web. It enables you to write end-to-end tests, integration tests, and unit tests for your web applications.</p>
+
+        <h3>Why Cypress for E2E Testing?</h3>
+        <ul>
+            <li><strong>Fast & Reliable:</strong> Tests run directly in the browser with real-time reloading</li>
+            <li><strong>Time Travel:</strong> See snapshots of your application at every step</li>
+            <li><strong>Automatic Waiting:</strong> No need to add waits or sleeps to tests</li>
+            <li><strong>Real-time Reloading:</strong> See results instantly as you write tests</li>
+            <li><strong>Debugging:</strong> Readable errors and stack traces make debugging simple</li>
+        </ul>
+
+        <h3>Project Context</h3>
+        <p>This guide documents the setup of Cypress in a Next.js 15 application with the following stack:</p>
+        <ul>
+            <li>Next.js 15.5.3 with React 19</li>
+            <li>Redux Toolkit for state management</li>
+            <li>Supabase for authentication</li>
+            <li>Material-UI (MUI) for components</li>
+            <li>Vitest for unit testing (complementary to Cypress)</li>
+        </ul>
+
+        <!-- SECTION 2: INSTALLATION -->
+        <h2 id="installation">2. Installation & Setup</h2>
+
+        <h3><span class="step-number">1</span>Install Cypress Dependencies</h3>
+        <p>Install Cypress and related testing libraries:</p>
+        <pre><code>npm install --save-dev cypress @testing-library/cypress start-server-and-test</code></pre>
+
+        <div class="info-box">
+            <p><strong>Package Breakdown:</strong></p>
+            <ul>
+                <li><code>cypress</code> - The core Cypress testing framework</li>
+                <li><code>@testing-library/cypress</code> - Cypress Testing Library commands for better selectors</li>
+                <li><code>start-server-and-test</code> - Utility to start dev server before running tests</li>
+            </ul>
+        </div>
+
+        <h3><span class="step-number">2</span>Add NPM Scripts</h3>
+        <p>Add the following scripts to your <code>package.json</code>:</p>
+        <pre><code>"scripts": {
+  "dev": "next dev --turbopack",
+  "build": "next build --turbopack",
+  "start": "next start",
+  "test": "vitest",
+  "cypress": "cypress open",
+  "cypress:headless": "cypress run",
+  "e2e": "start-server-and-test dev http://localhost:3000 cypress",
+  "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless"
+}</code></pre>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Script</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>cypress</code></td>
+                    <td>Opens Cypress Test Runner in interactive mode</td>
+                </tr>
+                <tr>
+                    <td><code>cypress:headless</code></td>
+                    <td>Runs all tests in headless mode (no UI)</td>
+                </tr>
+                <tr>
+                    <td><code>e2e</code></td>
+                    <td>Starts dev server and opens Cypress (most convenient)</td>
+                </tr>
+                <tr>
+                    <td><code>e2e:headless</code></td>
+                    <td>Starts dev server and runs tests headlessly (CI/CD)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- SECTION 3: CONFIGURATION -->
+        <h2 id="configuration">3. Configuration</h2>
+
+        <h3><span class="step-number">3</span>Create Cypress Configuration File</h3>
+        <p>Create <code>cypress.config.js</code> in your project root:</p>
+        <pre><code>const { defineConfig } = require("cypress");
+
+module.exports = defineConfig({
+  e2e: {
+    baseUrl: "http://localhost:3000",
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+    },
+    specPattern: "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
+    supportFile: "cypress/support/e2e.js",
+    video: false,
+    screenshotOnRunFailure: true,
+    viewportWidth: 1280,
+    viewportHeight: 720,
+  },
+  component: {
+    devServer: {
+      framework: "next",
+      bundler: "webpack",
+    },
+    specPattern: "cypress/component/**/*.cy.{js,jsx,ts,tsx}",
+    supportFile: "cypress/support/component.js",
+  },
+});</code></pre>
+
+        <div class="info-box">
+            <p><strong>Configuration Options Explained:</strong></p>
+            <ul>
+                <li><code>baseUrl</code> - Base URL for your application (used with cy.visit())</li>
+                <li><code>specPattern</code> - Glob pattern for test files</li>
+                <li><code>video: false</code> - Disable video recording (saves space)</li>
+                <li><code>screenshotOnRunFailure</code> - Take screenshots when tests fail</li>
+                <li><code>viewportWidth/Height</code> - Default browser viewport size</li>
+            </ul>
+        </div>
+
+        <h3><span class="step-number">4</span>Update .gitignore</h3>
+        <p>Add Cypress artifacts to your <code>.gitignore</code>:</p>
+        <pre><code># cypress
+cypress/videos
+cypress/screenshots
+cypress/downloads</code></pre>
+
+        <!-- SECTION 4: FILE STRUCTURE -->
+        <h2 id="file-structure">4. File Structure</h2>
+
+        <h3>Create Support Files</h3>
+        <p>Create the following directory structure:</p>
+
+        <div class="file-tree">
+<span class="tree-directory">cypress/</span>
+<span class="tree-icon">│</span>
+<span class="tree-icon">├──</span> <span class="tree-directory">e2e/</span>                           <span class="tree-comment"># E2E test files</span>
+<span class="tree-icon">│   ├──</span> <span class="tree-file">home.cy.js</span>
+<span class="tree-icon">│   ├──</span> <span class="tree-file">countries.cy.js</span>
+<span class="tree-icon">│   ├──</span> <span class="tree-file">navigation.cy.js</span>
+<span class="tree-icon">│   ├──</span> <span class="tree-file">favourites.cy.js</span>
+<span class="tree-icon">│   └──</span> <span class="tree-file">authentication.cy.js</span>
+<span class="tree-icon">│</span>
+<span class="tree-icon">├──</span> <span class="tree-directory">fixtures/</span>                      <span class="tree-comment"># Test data</span>
+<span class="tree-icon">│   └──</span> <span class="tree-file">example.json</span>
+<span class="tree-icon">│</span>
+<span class="tree-icon">├──</span> <span class="tree-directory">support/</span>                       <span class="tree-comment"># Helper files</span>
+<span class="tree-icon">│   ├──</span> <span class="tree-file">commands.js</span>               <span class="tree-comment"># Custom commands</span>
+<span class="tree-icon">│   ├──</span> <span class="tree-file">e2e.js</span>                    <span class="tree-comment"># E2E support file</span>
+<span class="tree-icon">│   └──</span> <span class="tree-file">component.js</span>              <span class="tree-comment"># Component support file</span>
+<span class="tree-icon">│</span>
+<span class="tree-icon">└──</span> <span class="tree-file">tsconfig.json</span>                 <span class="tree-comment"># TypeScript config</span>
+        </div>
+
+        <h3>Support Files Content</h3>
+
+        <h4>cypress/support/e2e.js</h4>
+        <pre><code>// Import commands.js using ES2015 syntax:
+import "./commands";
+
+// Import Cypress Testing Library commands
+import "@testing-library/cypress/add-commands";</code></pre>
+
+        <h4>cypress/support/commands.js</h4>
+        <pre><code>// Custom command for logging in (example using Supabase)
+Cypress.Commands.add("login", (email, password) => {
+  cy.session([email, password], () => {
+    cy.visit("/login");
+    
+    // Wait for form to load and type email
+    cy.get('input[type="email"]').should("be.visible").click().clear();
+    cy.get('input[type="email"]').type(email, { delay: 50 });
+    
+    // Type password (re-query to avoid detachment issues)
+    cy.get('input[type="password"]').should("be.visible").click().clear();
+    cy.get('input[type="password"]').type(password, { delay: 50 });
+    
+    // Submit the form
+    cy.get('button[type="submit"]').click();
+    
+    // Wait for successful login (redirect away from login page)
+    cy.url().should("not.include", "/login", { timeout: 10000 });
+  });
+});
+
+// Custom command to clear Supabase session
+Cypress.Commands.add("logout", () => {
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.window().then((win) => {
+    win.sessionStorage.clear();
+  });
+});</code></pre>
+
+        <!-- SECTION 5: WRITING TESTS -->
+        <h2 id="writing-tests">5. Writing Tests</h2>
+
+        <h3>Basic Test Structure</h3>
+        <pre><code>describe("Feature Name", () => {
+  beforeEach(() => {
+    cy.visit("/path");
+  });
+
+  it("should do something", () => {
+    cy.get('[data-testid="element"]').should("be.visible");
+    cy.contains("Text").click();
+    cy.url().should("include", "/expected-path");
+  });
+});</code></pre>
+
+        <h3>Example Test: Countries Page</h3>
+        <pre><code>describe("Countries Page", () => {
+  beforeEach(() => {
+    cy.visit("/countries");
+  });
+
+  it("should load the countries page", () => {
+    cy.url().should("include", "/countries");
+  });
+
+  it("should display a list of countries after loading", () => {
+    // Wait for countries to load
+    cy.get('[data-testid="country-card"]', { timeout: 10000 }).should(
+      "have.length.greaterThan",
+      0
+    );
+  });
+
+  it("should navigate to a country detail page when clicked", () => {
+    // Wait for countries to load and click the first country card
+    cy.get('[data-testid="country-card-button"]', { timeout: 10000 })
+      .first()
+      .click();
+
+    // Verify navigation to detail page
+    cy.url().should("include", "/countries/");
+  });
+});</code></pre>
+
+        <!-- SECTION 6: PROBLEMS ENCOUNTERED -->
+        <h2 id="problems-encountered">6. Problems Encountered & Solutions</h2>
+
+        <h3>Problem 1: Elements Not Found</h3>
+
+        <div class="error-box">
+            <p><span class="icon">❌</span> <strong>Error Message:</strong></p>
+            <pre><code>AssertionError: Timed out retrying after 10000ms: 
+Expected to find element: `[data-testid="country-card"]`, but never found it.</code></pre>
+        </div>
+
+        <h4>Root Cause</h4>
+        <p>Tests were looking for <code>data-testid</code> attributes that didn't exist in the components. The tests were using selectors that didn't match the actual rendered HTML.</p>
+
+        <h4>Initial Test Code (Broken)</h4>
+        <pre><code>it("should display a list of countries", () => {
+  cy.get('[data-testid="country-card"]').should('exist');
+});</code></pre>
+
+        <h4>Component Code (No Test IDs)</h4>
+        <pre><code>// Original component without data-testid
+&lt;Card key={country.name.common} sx={{ width: "200px", height: "200px" }}&gt;
+  &lt;CardActionArea onClick={() => handleCountryClick(country.name.common)}&gt;
+    &lt;CardContent&gt;
+      &lt;Image src={country.flags.svg} alt={country.name.common} /&gt;
+      &lt;Typography variant="h6"&gt;{country.name.common}&lt;/Typography&gt;
+    &lt;/CardContent&gt;
+  &lt;/CardActionArea&gt;
+&lt;/Card&gt;</code></pre>
+
+        <div class="success-box">
+            <h4><span class="icon">✅</span> Solution: Add data-testid Attributes</h4>
+            <p>Updated the component to include <code>data-testid</code> attributes for testing:</p>
+        </div>
+
+        <pre><code>// Updated component with data-testid attributes
+&lt;Grid
+  container
+  spacing={2}
+  direction="row"
+  justifyContent="center"
+  alignItems="center"
+  data-testid="countries-grid"
+&gt;
+  {countries.map((country) => (
+    &lt;Card
+      key={country.name.common}
+      sx={{ width: "200px", height: "200px" }}
+      data-testid="country-card"
+    &gt;
+      &lt;CardActionArea
+        onClick={() => handleCountryClick(country.name.common)}
+        data-testid="country-card-button"
+      &gt;
+        &lt;CardContent&gt;
+          &lt;Image
+            width={100}
+            height={100}
+            src={country.flags.svg}
+            alt={country.name.common}
+          /&gt;
+          &lt;Typography variant="h6"&gt;{country.name.common}&lt;/Typography&gt;
+        &lt;/CardContent&gt;
+      &lt;/CardActionArea&gt;
+    &lt;/Card&gt;
+  ))}
+&lt;/Grid&gt;</code></pre>
+
+        <div class="info-box">
+            <p><strong>Why data-testid is Better:</strong></p>
+            <ul>
+                <li>Tests don't break when CSS classes change</li>
+                <li>Clear intent - obvious which elements are for testing</li>
+                <li>More performant selector matching</li>
+                <li>Easier to maintain when component structure changes</li>
+            </ul>
+        </div>
+
+        <hr style="margin: 40px 0; border: none; border-top: 2px solid #ddd;">
+
+        <h3>Problem 2: Role Button Selector Not Found</h3>
+
+        <div class="error-box">
+            <p><span class="icon">❌</span> <strong>Error Message:</strong></p>
+            <pre><code>AssertionError: Timed out retrying after 10000ms: 
+Expected to find element: `[role="button"]`, but never found it.</code></pre>
+        </div>
+
+        <h4>Root Cause</h4>
+        <p>Material-UI's <code>CardActionArea</code> component doesn't always render with <code>role="button"</code>. The test was assuming a semantic role that wasn't present.</p>
+
+        <h4>Initial Test Code (Broken)</h4>
+        <pre><code>it("should navigate to a country detail page when clicked", () => {
+  cy.get('[role="button"]', { timeout: 10000 }).first().click();
+  cy.url().should("include", "/countries/");
+});</code></pre>
+
+        <div class="warning-box">
+            <p><span class="icon">⚠️</span> <strong>Alternative Approaches Tried:</strong></p>
+            <ol>
+                <li><strong>CSS Class Selector:</strong> <code>.MuiCardActionArea-root</code> - Works but fragile (breaks if MUI updates)</li>
+                <li><strong>Image Selector:</strong> <code>img[alt]</code> - Works but not semantic</li>
+                <li><strong>data-testid:</strong> <code>[data-testid="country-card-button"]</code> - Best solution!</li>
+            </ol>
+        </div>
+
+        <div class="success-box">
+            <h4><span class="icon">✅</span> Solution: Use data-testid on CardActionArea</h4>
+            <p>Added a specific <code>data-testid</code> to the clickable area:</p>
+        </div>
+
+        <pre><code>// Updated test
+it("should navigate to a country detail page when clicked", () => {
+  cy.get('[data-testid="country-card-button"]', { timeout: 10000 })
+    .first()
+    .click();
+  cy.url().should("include", "/countries/");
+});</code></pre>
+
+        <hr style="margin: 40px 0; border: none; border-top: 2px solid #ddd;">
+
+        <h3>Problem 3: Input Value Not Persisting (Supabase Auth UI)</h3>
+
+        <div class="error-box">
+            <p><span class="icon">❌</span> <strong>Error Message:</strong></p>
+            <pre><code>AssertionError: Timed out retrying after 4000ms: 
+expected '&lt;input#email.supabase-auth-ui_ui-input&gt;' 
+to have value 'test@example.com', but the value was ''</code></pre>
+        </div>
+
+        <h4>Root Cause</h4>
+        <p>The Supabase Auth UI input wasn't accepting typed values. The component needed proper focus and interaction before typing would work.</p>
+
+        <h4>Initial Test Code (Broken)</h4>
+        <pre><code>it("should accept valid email format", () => {
+  cy.get('input[type="email"]').type("test@example.com");
+  cy.get('input[type="email"]').should("have.value", "test@example.com");
+});</code></pre>
+
+        <div class="success-box">
+            <h4><span class="icon">✅</span> Solution: Add Click, Clear, and Delay</h4>
+            <p>The Supabase Auth UI inputs need to be properly focused and cleared before typing:</p>
+        </div>
+
+        <pre><code>it("should accept valid email format", () => {
+  cy.get('input[type="email"]')
+    .should("be.visible")      // Wait for element to be visible
+    .click()                   // Focus the input
+    .clear()                   // Clear any existing value
+    .type("test@example.com", { delay: 50 }); // Type with delay
+  
+  // Re-query to avoid detachment issues
+  cy.get('input[type="email"]').should("have.value", "test@example.com");
+});</code></pre>
+
+        <div class="info-box">
+            <p><strong>Key Additions:</strong></p>
+            <ul>
+                <li><code>.should("be.visible")</code> - Ensures element is ready</li>
+                <li><code>.click()</code> - Properly focuses the Supabase Auth UI input</li>
+                <li><code>.clear()</code> - Removes any pre-filled values</li>
+                <li><code>{ delay: 50 }</code> - Adds delay between keystrokes for dynamic forms</li>
+            </ul>
+        </div>
+
+        <hr style="margin: 40px 0; border: none; border-top: 2px solid #ddd;">
+
+        <h3>Problem 4: DOM Element Detachment</h3>
+
+        <div class="error-box">
+            <p><span class="icon">❌</span> <strong>Error Message:</strong></p>
+            <pre><code>CypressError: `cy.type()` failed because the page updated as a result 
+of this command, but you tried to continue the command chain. 
+The subject is no longer attached to the DOM, and Cypress cannot 
+requery the page after commands such as `cy.type()`.
+
+Common situations why this happens:
+  - Your JS framework re-rendered asynchronously
+  - Your app code reacted to an event firing and removed the element</code></pre>
+        </div>
+
+        <h4>Root Cause</h4>
+        <p>The Supabase Auth UI re-renders its form components after user interaction, causing the DOM element to detach during a chained Cypress command.</p>
+
+        <h4>Initial Test Code (Broken)</h4>
+        <pre><code>// ❌ Broken: Long command chain causes detachment
+cy.get('input[type="email"]')
+  .should("be.visible")
+  .click()
+  .clear()
+  .type("test@example.com", { delay: 50 })
+  .should("have.value", "test@example.com"); // Fails here!</code></pre>
+
+        <div class="warning-box">
+            <p><span class="icon">⚠️</span> <strong>Why This Happens:</strong></p>
+            <p>When you chain commands like <code>.type().should()</code>, Cypress keeps a reference to the original element. If the component re-renders (common in React apps with Supabase Auth UI), the element is replaced in the DOM, making the original reference stale.</p>
+        </div>
+
+        <div class="success-box">
+            <h4><span class="icon">✅</span> Solution: Break the Command Chain</h4>
+            <p>Re-query the element after actions that might cause re-renders:</p>
+        </div>
+
+        <pre><code>// ✅ Working: Break the chain by re-querying
+cy.get('input[type="email"]')
+  .should("be.visible")
+  .click()
+  .clear()
+  .type("test@example.com", { delay: 50 });
+
+// Re-query the element for assertion (new command chain)
+cy.get('input[type="email"]').should("have.value", "test@example.com");</code></pre>
+
+        <h4>Updated Custom Login Command</h4>
+        <pre><code>Cypress.Commands.add("login", (email, password) => {
+  cy.session([email, password], () => {
+    cy.visit("/login");
+    
+    // Email: Clear first, then type (separate queries)
+    cy.get('input[type="email"]').should("be.visible").click().clear();
+    cy.get('input[type="email"]').type(email, { delay: 50 });
+    
+    // Password: Clear first, then type (separate queries)
+    cy.get('input[type="password"]').should("be.visible").click().clear();
+    cy.get('input[type="password"]').type(password, { delay: 50 });
+    
+    // Submit
+    cy.get('button[type="submit"]').click();
+    cy.url().should("not.include", "/login", { timeout: 10000 });
+  });
+});</code></pre>
+
+        <div class="info-box">
+            <p><strong>Pattern to Remember:</strong></p>
+            <p>For dynamic forms (especially Supabase Auth UI, React forms with state):</p>
+            <ol>
+                <li>Query element → Prepare (click, clear)</li>
+                <li>Query element again → Type</li>
+                <li>Query element again → Assert</li>
+            </ol>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Approach</th>
+                    <th>Result</th>
+                    <th>Use Case</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Long command chain</td>
+                    <td><span class="badge badge-error">❌ Fails</span></td>
+                    <td>Never use with dynamic forms</td>
+                </tr>
+                <tr>
+                    <td>Break chain after .type()</td>
+                    <td><span class="badge badge-success">✅ Works</span></td>
+                    <td>Dynamic forms, Supabase Auth UI</td>
+                </tr>
+                <tr>
+                    <td>Use .then() callback</td>
+                    <td><span class="badge badge-success">✅ Works</span></td>
+                    <td>Complex interactions</td>
+                </tr>
+                <tr>
+                    <td>Alias with .as()</td>
+                    <td><span class="badge badge-warning">⚠️ Sometimes</span></td>
+                    <td>Static forms only</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- SECTION 7: BEST PRACTICES -->
+        <h2 id="best-practices">7. Best Practices</h2>
+
+        <h3>1. Use data-testid Attributes</h3>
+        <div class="success-box">
+            <p><strong>✅ Good:</strong></p>
+            <pre><code>&lt;button data-testid="submit-button"&gt;Submit&lt;/button&gt;
+
+cy.get('[data-testid="submit-button"]').click();</code></pre>
+        </div>
+
+        <div class="error-box">
+            <p><strong>❌ Avoid:</strong></p>
+            <pre><code>&lt;button class="btn-primary btn-lg"&gt;Submit&lt;/button&gt;
+
+cy.get('.btn-primary').click(); // Breaks when CSS changes</code></pre>
+        </div>
+
+        <h3>2. Wait for API Calls with Intercepts</h3>
+        <pre><code>it("should load countries from API", () => {
+  cy.intercept("GET", "**/api/countries").as("getCountries");
+  cy.visit("/countries");
+  cy.wait("@getCountries");
+  cy.get('[data-testid="country-card"]').should("exist");
+});</code></pre>
+
+        <h3>3. Use cy.session() for Authentication</h3>
+        <p>Cache authentication sessions to speed up tests:</p>
+        <pre><code>Cypress.Commands.add("login", (email, password) => {
+  cy.session([email, password], () => {
+    // Login logic
+  });
+});</code></pre>
+
+        <h3>4. Clean Up Between Tests</h3>
+        <pre><code>beforeEach(() => {
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.logout();
+});</code></pre>
+
+        <h3>5. Use Appropriate Timeouts</h3>
+        <pre><code>// Default: 4 seconds
+cy.get('[data-testid="element"]').should("exist");
+
+// Custom timeout for slow-loading elements
+cy.get('[data-testid="slow-element"]', { timeout: 10000 }).should("exist");</code></pre>
+
+        <h3>6. Break Chains for Dynamic Content</h3>
+        <pre><code>// ❌ Don't chain after .type() on dynamic forms
+cy.get('input').type('text').should('have.value', 'text');
+
+// ✅ Break the chain
+cy.get('input').type('text');
+cy.get('input').should('have.value', 'text');</code></pre>
+
+        <h3>7. Test User Flows, Not Implementation</h3>
+        <div class="success-box">
+            <p><strong>✅ Good: Test user behavior</strong></p>
+            <pre><code>it("should allow user to add a country to favorites", () => {
+  cy.visit("/countries");
+  cy.get('[data-testid="country-card"]').first().click();
+  cy.get('[data-testid="favorite-button"]').click();
+  cy.visit("/favorites");
+  cy.get('[data-testid="favorite-item"]').should("exist");
+});</code></pre>
+        </div>
+
+        <div class="error-box">
+            <p><strong>❌ Bad: Test implementation details</strong></p>
+            <pre><code>it("should dispatch addFavorite action", () => {
+  // Don't test Redux actions in E2E tests
+  cy.window().its('store').invoke('dispatch', addFavorite(country));
+});</code></pre>
+        </div>
+
+        <!-- SECTION 8: RUNNING TESTS -->
+        <h2 id="running-tests">8. Running Tests</h2>
+
+        <h3>Interactive Mode (Development)</h3>
+        <p>Open the Cypress Test Runner UI:</p>
+        <pre><code>npm run cypress
+# or with auto-start dev server
+npm run e2e</code></pre>
+
+        <div class="info-box">
+            <p><strong>Benefits of Interactive Mode:</strong></p>
+            <ul>
+                <li>See tests run in real-time</li>
+                <li>Time-travel through each command</li>
+                <li>Inspect DOM at any point</li>
+                <li>Use Chrome DevTools for debugging</li>
+                <li>Hot reload when tests change</li>
+            </ul>
+        </div>
+
+        <h3>Headless Mode (CI/CD)</h3>
+        <p>Run all tests in the terminal:</p>
+        <pre><code>npm run cypress:headless
+# or with auto-start dev server
+npm run e2e:headless</code></pre>
+
+        <h3>Running Specific Tests</h3>
+        <pre><code># Run a specific test file
+npx cypress run --spec "cypress/e2e/countries.cy.js"
+
+# Run tests matching a pattern
+npx cypress run --spec "cypress/e2e/**/*countries*.cy.js"</code></pre>
+
+        <h3>Running Tests in Different Browsers</h3>
+        <pre><code># Chrome (default)
+npx cypress run --browser chrome
+
+# Firefox
+npx cypress run --browser firefox
+
+# Edge
+npx cypress run --browser edge
+
+# Electron (headless)
+npx cypress run --browser electron</code></pre>
+
+        <!-- SECTION 9: ADVANCED TOPICS -->
+        <h2 id="advanced-topics">9. Advanced Topics</h2>
+
+        <h3>Custom Commands</h3>
+        <p>Create reusable commands in <code>cypress/support/commands.js</code>:</p>
+        <pre><code>// Custom command to login
+Cypress.Commands.add("login", (email, password) => {
+  // Implementation
+});
+
+// Custom command to wait for loading to complete
+Cypress.Commands.add("waitForLoading", () => {
+  cy.get('[data-testid="loading"]').should("not.exist");
+});
+
+// Use in tests
+cy.login("user@example.com", "password");
+cy.waitForLoading();</code></pre>
+
+        <h3>Environment Variables</h3>
+        <p>Create <code>cypress.env.json</code> for environment-specific configuration:</p>
+        <pre><code>{
+  "apiUrl": "http://localhost:3000/api",
+  "testUser": {
+    "email": "test@example.com",
+    "password": "password123"
+  }
+}</code></pre>
+
+        <p>Access in tests:</p>
+        <pre><code>const testUser = Cypress.env("testUser");
+cy.login(testUser.email, testUser.password);</code></pre>
+
+        <h3>API Mocking with cy.intercept()</h3>
+        <pre><code>it("should handle API errors gracefully", () => {
+  cy.intercept("GET", "**/api/countries", {
+    statusCode: 500,
+    body: { error: "Internal Server Error" }
+  }).as("getCountriesError");
+
+  cy.visit("/countries");
+  cy.wait("@getCountriesError");
+  cy.contains("Error loading countries").should("be.visible");
+});</code></pre>
+
+        <h3>Component Testing</h3>
+        <p>Test components in isolation:</p>
+        <pre><code>import FavoriteButton from "@/components/FavoriteButton";
+
+describe("FavoriteButton", () => {
+  it("should toggle favorite state", () => {
+    cy.mount(&lt;FavoriteButton countryId="123" /&gt;);
+    cy.get('[data-testid="favorite-button"]').click();
+    cy.get('[data-testid="favorite-button"]').should("have.attr", "aria-pressed", "true");
+  });
+});</code></pre>
+
+        <!-- SECTION 10: TROUBLESHOOTING -->
+        <h2 id="troubleshooting">10. Troubleshooting Guide</h2>
+
+        <h3>Common Issues & Solutions</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Issue</th>
+                    <th>Possible Cause</th>
+                    <th>Solution</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tests are flaky</td>
+                    <td>Race conditions, missing waits</td>
+                    <td>Add explicit waits, use cy.intercept(), increase timeouts</td>
+                </tr>
+                <tr>
+                    <td>Element not found</td>
+                    <td>Element not rendered yet</td>
+                    <td>Add timeout, wait for API calls, check selector</td>
+                </tr>
+                <tr>
+                    <td>Element detached from DOM</td>
+                    <td>Component re-rendered</td>
+                    <td>Break command chain, re-query element</td>
+                </tr>
+                <tr>
+                    <td>Input not accepting value</td>
+                    <td>Input not focused, dynamic form</td>
+                    <td>Add .click() and .clear(), use delay option</td>
+                </tr>
+                <tr>
+                    <td>Cypress won't start</td>
+                    <td>Port conflict, missing dependencies</td>
+                    <td>Check port 3000, reinstall Cypress</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Debugging Tips</h3>
+
+        <h4>1. Use .debug() Command</h4>
+        <pre><code>cy.get('[data-testid="element"]')
+  .debug()  // Pauses execution and opens debugger
+  .click();</code></pre>
+
+        <h4>2. Use .pause() Command</h4>
+        <pre><code>cy.get('[data-testid="element"]')
+  .pause()  // Pauses and shows "Resume" button
+  .click();</code></pre>
+
+        <h4>3. Log to Console</h4>
+        <pre><code>cy.get('[data-testid="element"]').then(($el) => {
+  console.log("Element:", $el);
+  console.log("Text:", $el.text());
+});</code></pre>
+
+        <h4>4. Take Screenshots</h4>
+        <pre><code>cy.screenshot("debug-screenshot");
+cy.get('[data-testid="element"]').screenshot("element-screenshot");</code></pre>
+
+        <h4>5. Increase Logging</h4>
+        <p>Set environment variable for verbose logging:</p>
+        <pre><code>DEBUG=cypress:* npm run cypress</code></pre>
+
+        <h3>Performance Optimization</h3>
+
+        <h4>1. Disable Video Recording</h4>
+        <p>In <code>cypress.config.js</code>:</p>
+        <pre><code>module.exports = defineConfig({
+  e2e: {
+    video: false,  // Saves time and disk space
+  },
+});</code></pre>
+
+        <h4>2. Use cy.session() for Auth</h4>
+        <p>Cache authentication to avoid repeated login:</p>
+        <pre><code>cy.session("user-session", () => {
+  cy.login("user@example.com", "password");
+});</code></pre>
+
+        <h4>3. Run Tests in Parallel</h4>
+        <p>Use Cypress Dashboard or CI/CD parallelization:</p>
+        <pre><code>npx cypress run --record --parallel</code></pre>
+
+        <h3>CI/CD Integration</h3>
+
+        <h4>GitHub Actions Example</h4>
+        <pre><code>name: E2E Tests
+
+on: [push, pull_request]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run Cypress tests
+        run: npm run e2e:headless
+      
+      - name: Upload screenshots on failure
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots</code></pre>
+
+        <!-- SUMMARY -->
+        <h2>Summary</h2>
+
+        <div class="success-box">
+            <h3>✅ What We Accomplished</h3>
+            <ul>
+                <li><strong>Installed and configured</strong> Cypress for E2E testing</li>
+                <li><strong>Created comprehensive test suites</strong> for all major features</li>
+                <li><strong>Solved real-world problems</strong> with dynamic forms and component re-renders</li>
+                <li><strong>Added data-testid attributes</strong> to components for reliable testing</li>
+                <li><strong>Implemented custom commands</strong> for authentication and common actions</li>
+                <li><strong>Documented best practices</strong> and troubleshooting techniques</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Key Takeaways</h3>
+            <ol>
+                <li><strong>Use data-testid attributes</strong> for stable, maintainable selectors</li>
+                <li><strong>Break command chains</strong> when dealing with dynamic components</li>
+                <li><strong>Add explicit actions</strong> (click, clear) for dynamic forms like Supabase Auth UI</li>
+                <li><strong>Use appropriate timeouts</strong> for slow-loading content</li>
+                <li><strong>Test user flows</strong>, not implementation details</li>
+                <li><strong>Cache authentication</strong> with cy.session() for faster tests</li>
+            </ol>
+        </div>
+
+        <h3>Next Steps</h3>
+        <ul>
+            <li>Add more test coverage for edge cases and error scenarios</li>
+            <li>Implement visual regression testing with Percy or Applitools</li>
+            <li>Set up Cypress Dashboard for test analytics</li>
+            <li>Configure parallelization for faster CI/CD runs</li>
+            <li>Add accessibility testing with cypress-axe</li>
+        </ul>
+
+        <h3>Resources</h3>
+        <ul>
+            <li><a href="https://docs.cypress.io" target="_blank">Official Cypress Documentation</a></li>
+            <li><a href="https://docs.cypress.io/guides/references/best-practices" target="_blank">Cypress Best Practices</a></li>
+            <li><a href="https://testing-library.com/docs/cypress-testing-library/intro/" target="_blank">Cypress Testing Library</a></li>
+            <li><a href="https://www.cypress.io/blog" target="_blank">Cypress Blog</a></li>
+        </ul>
+
+        <footer style="margin-top: 60px; padding-top: 20px; border-top: 2px solid #ddd; text-align: center; color: #777;">
+            <p>Created: October 2025 | Next.js 15 + Cypress E2E Testing Guide</p>
+            <p>This guide documents the complete setup and troubleshooting process for implementing Cypress E2E testing.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Simple JavaScript syntax highlighter
+        function highlightCode() {
+            document.querySelectorAll('pre code').forEach(block => {
+                let code = block.innerHTML;
+                
+                // Skip if already highlighted
+                if (code.includes('<span')) return;
+                
+                // Detect if it's a bash/shell command
+                const isBash = code.trim().startsWith('npm ') || 
+                              code.trim().startsWith('npx ') || 
+                              code.trim().startsWith('DEBUG=') ||
+                              code.includes('git ') ||
+                              code.includes('$ ') ||
+                              code.includes('open ');
+                
+                if (isBash) {
+                    // Add bash class to parent pre element
+                    block.parentElement.classList.add('bash');
+                    
+                    // Bash highlighting
+                    code = code.replace(/(#[^\n]*)/g, '<span class="comment">$1</span>');
+                    code = code.replace(/\b(npm|npx|node|git|cd|mkdir|touch|open|DEBUG)\b/g, '<span class="keyword">$1</span>');
+                    code = code.replace(/(--?[a-z-]+)/g, '<span class="property">$1</span>');
+                    code = code.replace(/("(?:[^"\\]|\\.)*")/g, '<span class="string">$1</span>');
+                    code = code.replace(/('(?:[^'\\]|\\.)*')/g, '<span class="string">$1</span>');
+                } else {
+                    // JavaScript highlighting
+                    
+                    // Comments (before strings to avoid conflicts)
+                    code = code.replace(/(\/\/[^\n]*)/g, '<span class="comment">$1</span>');
+                    code = code.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="comment">$1</span>');
+                    
+                    // Strings
+                    code = code.replace(/("(?:[^"\\]|\\.)*")/g, '<span class="string">$1</span>');
+                    code = code.replace(/('(?:[^'\\]|\\.)*')/g, '<span class="string">$1</span>');
+                    code = code.replace(/(`(?:[^`\\]|\\.)*`)/g, '<span class="string">$1</span>');
+                    
+                    // JSX/HTML tags
+                    code = code.replace(/(&lt;\/?[a-zA-Z][a-zA-Z0-9]*[^&]*?&gt;)/g, '<span class="string">$1</span>');
+                    
+                    // Keywords
+                    const keywords = ['const', 'let', 'var', 'function', 'return', 'if', 'else', 'for', 'while', 
+                                     'do', 'switch', 'case', 'break', 'continue', 'try', 'catch', 'finally', 
+                                     'throw', 'new', 'this', 'class', 'extends', 'super', 'static', 'import', 
+                                     'export', 'default', 'from', 'async', 'await', 'require', 'module',
+                                     'describe', 'it', 'beforeEach', 'afterEach', 'context'];
+                    keywords.forEach(keyword => {
+                        const regex = new RegExp('\\b(' + keyword + ')\\b', 'g');
+                        code = code.replace(regex, '<span class="keyword">$1</span>');
+                    });
+                    
+                    // Cypress commands (cy.)
+                    code = code.replace(/\b(cy)\b/g, '<span class="keyword">$1</span>');
+                    
+                    // Booleans and null
+                    code = code.replace(/\b(true|false|null|undefined)\b/g, '<span class="boolean">$1</span>');
+                    
+                    // Numbers
+                    code = code.replace(/\b(\d+)\b/g, '<span class="number">$1</span>');
+                    
+                    // Arrow functions
+                    code = code.replace(/=&gt;/g, '<span class="arrow">=&gt;</span>');
+                    
+                    // Methods (word followed by parenthesis, after a dot)
+                    code = code.replace(/\.(<span class="[^"]*">)?(\w+)(<\/span>)?(?=\()/g, '.<span class="method">$2</span>');
+                    
+                    // Properties (word after a dot, not followed by parenthesis)
+                    code = code.replace(/\.(<span class="[^"]*">)?(\w+)(<\/span>)?(?!\()/g, '.<span class="property">$2</span>');
+                    
+                    // Object properties (word followed by colon)
+                    code = code.replace(/\b(\w+)(?=\s*:)/g, '<span class="property">$1</span>');
+                    
+                    // Function calls (word followed by parenthesis)
+                    code = code.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*(?=\()/g, '<span class="function">$1</span>');
+                }
+                
+                block.innerHTML = code;
+            });
+        }
+        
+        // Run highlighter when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', highlightCode);
+        } else {
+            highlightCode();
+        }
+    </script>
+</body>
+</html>
